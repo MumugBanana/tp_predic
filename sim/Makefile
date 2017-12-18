@@ -41,22 +41,31 @@ LDLIBS   += -lboost_iostreams
 
 LDFLAGS += -L$(BOOST)/lib -Wl,-rpath $(BOOST)/lib
 
-CPPFLAGS := -DPC_BITS=$(PC_BITS) -DENTRY_BITS=$(ENTRY_BITS) -O3 -Wall -std=c++11 -Wextra -Winline -Winit-self -Wno-sequence-point -Wno-unused-parameter\
+CPPFLAGS := -DPC_BITS=$(PC_BITS) -DENTRY_BITS=$(ENTRY_BITS) -g -Wall -std=c++11 -Wextra -Winline -Winit-self -Wno-sequence-point -Wno-unused-parameter\
            -Wno-unused-function -Wno-inline -fPIC -W -Wcast-qual -Wpointer-arith -Woverloaded-virtual\
            -I$(CBP_BASE) -I/usr/include -I/user/include/boost/ -I/usr/include/boost/iostreams/ -I/usr/include/boost/iostreams/device/
 
-PROGRAMS := predictor
+PROGRAMS := predictor predictor0 predictor1
 
-objects = predictor.o main.o 
+objects = predictor.o main.o
+objects0 = predictor0.o main.o
+objects1 = predictor1.o main.o
+
 
 all: $(PROGRAMS)
 
 predictor : $(objects)
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+predictor0 : $(objects0)
+	$(CXX) $(CPPFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+predictor1 : $(objects1)
+	$(CXX) $(CPPFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
 main.o : CPPFLAGS += -Wno-unused-variable
 main.o : main.cc predictor.h
 predictor.o : predictor.cc predictor.h
+predictor0.o : predictor0.cc predictor.h
+predictor1.o : predictor1.cc predictor.h
 
 dbg: clean
 	$(MAKE) DBG_BUILD=1 all
